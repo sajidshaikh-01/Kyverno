@@ -1,0 +1,18 @@
+apiVersion: kyverno.io/v1
+kind: ClusterPolicy
+metadata:
+  name: readonly-root-filesystem
+spec:
+  rules:
+  - name: enforce-readonly-rootfs
+    match:
+      resources:
+        kinds:
+        - Pod
+    mutate:
+      patchStrategicMerge:
+        spec:
+          containers:
+          - (name): "*"
+            securityContext:
+              readOnlyRootFilesystem: true
