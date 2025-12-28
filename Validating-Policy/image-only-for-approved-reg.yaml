@@ -1,0 +1,18 @@
+apiVersion: kyverno.io/v1
+kind: ClusterPolicy
+metadata:
+  name: allow-approved-registries
+spec:
+  validationFailureAction: Enforce
+  rules:
+  - name: check-image-registry
+    match:
+      resources:
+        kinds:
+        - Pod
+    validate:
+      message: "Images must be from approved registry"
+      pattern:
+        spec:
+          containers:
+          - image: "123456789012.dkr.ecr.ap-south-1.amazonaws.com/*"
