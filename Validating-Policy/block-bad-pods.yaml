@@ -1,0 +1,36 @@
+apiVersion: kyverno.io/v1
+kind: ClusterPolicy
+metadata:
+  name: disallow-privileged-and-host-access
+spec:
+  validationFailureAction: enforce
+  background: true
+  rules:
+    - name: block-privileged-containers
+      match:
+        any:
+        - resources:
+            kinds:
+            - Pod
+      validate:
+        message: "Privileged containers are not allowed."
+        pattern:
+          spec:
+            containers:
+            - securityContext:
+                privileged: "false"
+
+    - name: block-host-namespaces
+      match:
+        any:
+        - resources:
+            kinds:
+            - Pod
+      validate:
+        message: "Host namespace sharing is not allowed (hostPID, hostIPC, hostNetwork)."
+        pattern:
+          spec:
+            =(hostPID): "false"
+            =(hostIPC): "false"
+            =(hostNetwork): "false"
+
